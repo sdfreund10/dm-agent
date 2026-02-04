@@ -8,10 +8,14 @@ class Campaign
   attr_reader :id, :world
   attr_accessor :name
 
-  def initialize(id: SecureRandom.uuid, name:, world_params: {})
+  def initialize(id: SecureRandom.uuid, name:, themes:[],world_params: {})
     @id = id
     @name = name
     @world = World.new(campaign: self, **world_params)
+  end
+
+  def set_up
+    world.generate_backstory(themes: themes)
   end
 
 
@@ -27,7 +31,8 @@ class Campaign
     {
       id: id,
       name: name,
-      world: world.to_hash
+      world: world.to_hash,
+      themes: themes
     }
   end
 

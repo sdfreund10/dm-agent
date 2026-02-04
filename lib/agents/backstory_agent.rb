@@ -40,8 +40,7 @@ module Agents
 
 
       After creating a backstory, create a list of key plot points for the players to follow. They should start with an entrypoint accessible to lower level characters, and work up in to the larger conflict.
-      The plot should be a list of 10-15 key story points.
-
+      The plot should contain a list of 10-15 key story points.
     SYSTEM
 
     # ask specific questions to fill in info about the world.

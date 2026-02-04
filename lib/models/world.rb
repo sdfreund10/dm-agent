@@ -30,6 +30,8 @@ class World
   end
 
   def generate_backstory
+    return self if backstory
+
     Agents::BackstoryAgent.new(world: self).generate_backstory
     self
   end
