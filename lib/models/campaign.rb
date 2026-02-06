@@ -1,38 +1,32 @@
 require "securerandom"
 require "json"
+require "lib/models/concerns/file_saveable"
 
 # File-backed ORM
 #  - Each record is a JSON named like <model-name>-<uuid>.json
 #
 class Campaign
+  include FileSaveable
+  storage_key "campaigns"
+
   attr_reader :id, :world
   attr_accessor :name
 
-  def initialize(id: SecureRandom.uuid, name:, themes:[],world_params: {})
+  def initialize(id: SecureRandom.uuid, name: nil, world_params: {})
     @id = id
     @name = name
     @world = World.new(campaign: self, **world_params)
   end
 
   def set_up
-    world.generate_backstory(themes: themes)
-  end
-
-
-  def save
-    File.write(file_name, to_json)
-  end
-
-  def file_name
-    "#{self.class.data_location}/#{id}.json"
+    world.generate_backstory
   end
 
   def to_hash
     {
       id: id,
       name: name,
-      world: world.to_hash,
-      themes: themes
+      world: world.to_hash
     }
   end
 
@@ -40,33 +34,17 @@ class Campaign
     to_hash.to_json
   end
 
-  # Class methods
-  def self.data_location
-    if ENV["APP_ENV"] == "test"
-      File.expand_path("../../data/test/campaigns", __dir__)
-    else
-      File.expand_path("../../data/campaigns", __dir__)
-    end
+  def new?
+    false
   end
 
-  def self.all
-    file_names = Dir.glob("#{data_location}/*.json")
-    file_names.map do |file_name|
-      new(JSON.parse(File.read(file_name)))
+  class NewCampaign
+    def inspect
+      "Create a New Campaign"
     end
-  end
 
-  def self.find(id)
-    file_name = "#{data_location}/#{id}.json"
-
-    if File.exist?(file_name)
-      new(JSON.parse(File.read(file_name)))
-    else
-      nil
+    def new?
+      true
     end
-  end
-
-  def self.delete_all
-    FileUtils.rm_f Dir.glob("#{data_location}/*")
   end
 end

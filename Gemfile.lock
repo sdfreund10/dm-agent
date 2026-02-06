@@ -4,7 +4,12 @@ GEM
     ansi (1.5.0)
     base64 (0.3.0)
     builder (3.3.0)
+    date (3.5.1)
+    debug (1.11.1)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     dotenv (3.2.0)
+    erb (6.0.1)
     event_stream_parser (1.0.0)
     faraday (2.14.0)
       faraday-net_http (>= 2.0, < 3.5)
@@ -16,6 +21,11 @@ GEM
       net-http (~> 0.5)
     faraday-retry (2.4.0)
       faraday (~> 2.0)
+    io-console (0.8.2)
+    irb (1.16.0)
+      pp (>= 0.6.0)
+      rdoc (>= 4.0.0)
+      reline (>= 0.4.2)
     json (2.18.0)
     logger (1.7.0)
     marcel (1.1.0)
@@ -28,7 +38,19 @@ GEM
     multipart-post (2.4.1)
     net-http (0.9.1)
       uri (>= 0.11.1)
+    pp (0.6.3)
+      prettyprint
+    prettyprint (0.2.0)
+    psych (5.3.1)
+      date
+      stringio
     rake (13.3.1)
+    rdoc (7.1.0)
+      erb
+      psych (>= 4.0.0)
+      tsort
+    reline (0.6.3)
+      io-console (~> 0.5)
     ruby-progressbar (1.13.0)
     ruby_llm (1.11.0)
       base64
@@ -41,6 +63,8 @@ GEM
       ruby_llm-schema (~> 0.2.1)
       zeitwerk (~> 2)
     ruby_llm-schema (0.2.5)
+    stringio (3.2.0)
+    tsort (0.2.0)
     uri (1.1.1)
     zeitwerk (2.7.4)
 
@@ -49,6 +73,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  debug (~> 1.11)
   dotenv (~> 3.2)
   minitest (~> 5.22)
   minitest-reporters (~> 1.6)

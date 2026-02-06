@@ -16,4 +16,10 @@ class CampaignTest < Minitest::Test
     assert(File.exist?(campaign.file_name))
     assert_equal(campaign.to_json, File.read(campaign.file_name))
   end
+
+  def test_create_writes_to_file
+    campaign = Campaign.create(name: "Test Campaign")
+    assert(File.exist?(campaign.file_name))
+    assert_equal(campaign.to_json, File.read(campaign.file_name))
+  end
 end

@@ -11,11 +11,10 @@ class WorldTest < Minitest::Test
     assert_equal(
       {
         backstory: nil,
-        characters: nil,
+        npcs: nil,
         events: nil,
         notes: nil,
-        plot: nil,
-        themes: nil
+        plot: nil
       },
       world.to_hash
     )
@@ -25,9 +24,8 @@ class WorldTest < Minitest::Test
     campaign = build_campaign
     world = ::World.new(campaign: campaign)
     world.generate_backstory
-    puts world.to_json
     refute_nil(world.backstory)
-    refute_nil(world.characters)
+    refute_nil(world.npcs)
     refute_nil(world.plot)
   end
 

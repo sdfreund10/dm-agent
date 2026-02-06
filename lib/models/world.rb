@@ -2,26 +2,24 @@ require "json"
 require "lib/agents/backstory_agent"
 
 class World
-  attr_accessor :campaign, :backstory, :characters, :events, :notes, :plot, :themes
+  attr_accessor :campaign, :backstory, :npcs, :events, :notes, :plot
 
-  def initialize(campaign:, backstory: nil, characters: nil, events: nil, notes: nil, plot: nil, themes: nil)
+  def initialize(campaign:, backstory: nil, npcs: nil, events: nil, notes: nil, plot: nil)
     @campaign = campaign
     @backstory = backstory
-    @characters = characters
+    @npcs = npcs
     @events = events
     @notes = notes
     @plot = plot
-    @themes = themes
   end
 
   def to_hash
     {
       backstory: backstory,
-      characters: characters,
+      npcs: npcs,
       events: events,
       notes: notes,
-      plot: plot,
-      themes: themes
+      plot: plot
     }
   end
 
@@ -32,7 +30,7 @@ class World
   def generate_backstory
     return self if backstory
 
-    Agents::BackstoryAgent.new(world: self).generate_backstory
+    BackstoryAgent.new(world: self).generate_backstory
     self
   end
 

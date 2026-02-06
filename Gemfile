@@ -9,3 +9,5 @@ gem "rake", "~> 13.0"
 gem "ruby_llm", "~> 1.11"
 
 gem "dotenv", "~> 3.2"
+
+gem "debug", "~> 1.11"

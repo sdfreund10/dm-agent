@@ -9,7 +9,7 @@ module TestSupport
 
     DEFAULT_BACKSTORY_CONTENT = {
       "backstory" => "A realm of ancient magic and rising darkness.",
-      "characters" => [
+      "npcs" => [
         { "name" => "The Shadow Lord", "description" => "Villain seeking the lost artifact." },
         { "name" => "Elder Mara", "description" => "Wise keeper of the village." }
       ],
