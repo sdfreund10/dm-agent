@@ -1,5 +1,6 @@
-require "ruby_llm"
 require "dotenv/load"
+require "ruby_llm"
+require "ruby_llm/schema"
 
 # 1,048,576 context window limit for Gemini 2.5 Flash
 # try to limit total input to 10k tokens

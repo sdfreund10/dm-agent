@@ -2,14 +2,14 @@
 
 $LOAD_PATH.unshift(File.expand_path("../", __dir__))
 ENV["APP_ENV"] = "test"
+require "minitest"
+require "minitest/autorun"
+require "minitest/reporters"
 
 # clear data directory
 Dir.glob('data/test/**/*.json').each do |file|
   File.delete(file)
 end
-
-require "minitest/autorun"
-require "minitest/reporters"
 
 # Stub RubyLLM so tests don't hit the real API. Set REAL_LLM=1 to use the real Gemini API.
 require "ruby_llm"

@@ -43,7 +43,7 @@ class Character
       level: level,
       backstory: backstory,
       summary: summary,
-      campaign_ids: campaign_ids
+      campaign_ids: @campaign_ids
     }
   end
 
@@ -58,6 +58,12 @@ class Character
 
   def campaigns
     @campaigns ||= @campaign_ids.map { |id| Campaign.find(id) }
+  end
+
+  def join_campaign(campaign)
+    @campaign_ids << campaign.id
+    campaigns.push(campaign)
+    save
   end
 
   # Trying Null object pattern to handle the "Create a New Character" option.

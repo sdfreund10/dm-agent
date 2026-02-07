@@ -1,7 +1,7 @@
 module CLI
   class BaseInterface
-    def self.run
-      new.run
+    def self.run(*args)
+      new.run(*args)
     end
   end
 end

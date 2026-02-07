@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+project_root = File.expand_path("..", __dir__)
+Dir.chdir(project_root)
+
+require "bundler/setup"
+require "rake"
+
+Rake.application.init
+Rake.application.load_rakefile
+Rake.application["test"].invoke

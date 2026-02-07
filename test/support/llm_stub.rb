@@ -17,6 +17,10 @@ module TestSupport
     }.freeze
 
     DEFAULT_LORE_CONTENT = "The artifact was forged in the First Age by the dwarven smiths of Khazad."
+    DEFAULT_CHARACTER_CONTENT = {
+      "backstory" => "A young human fighter from the village of Greenmeadow, seeking adventure and glory.",
+      "summary" => "A young human fighter from the village of Greenmeadow, seeking adventure and glory."
+    }.freeze
 
     class << self
       attr_accessor :backstory_content, :lore_content
@@ -38,6 +42,8 @@ module TestSupport
       # generate_backstory calls .ask("Generate a backstory for the campaign.")
       if prompt.to_s.include?("Generate a backstory")
         Response.new(content: self.class.backstory_content.dup)
+      elsif prompt.to_s.include?("You will be provided the basic details of a DnD character.")
+        Response.new(content: DEFAULT_CHARACTER_CONTENT.dup)
       else
         Response.new(content: self.class.lore_content.dup)
       end

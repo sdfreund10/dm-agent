@@ -8,6 +8,10 @@ module FileSaveable
     self
   end
 
+  def to_json
+    JSON.pretty_generate(to_hash)
+  end
+
   def file_name
     "#{self.class.data_location}/#{id}.json"
   end
@@ -18,6 +22,8 @@ module FileSaveable
   end
 
   module ClassMethods
+    # IDEA: Can I define a set of attributes via a class method and automatically generate initializer & to_hash?
+
     def storage_key(name)
       @storage_key = name
       FileUtils.mkdir_p(data_location)

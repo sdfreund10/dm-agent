@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "lib/models/world"
 require "lib/models/character"
 require "lib/models/campaign"
 require "cli/campaign_selection"
@@ -18,7 +17,7 @@ class CLITest < Minitest::Test
     $stdout = @stdout
   end
 
-  def test_run_prints_selected_campaign_and_character_when_CampaignSelection_stubbed
+  def test_displays_character_and_campaign_options
     campaign = build_campaign(name: "Stubbed Campaign")
     character = Character.new(
       name: "New Character",
@@ -26,7 +25,7 @@ class CLITest < Minitest::Test
       species: "Human",
       level: "3",
       backstory: "",
-      campaigns: []
+      campaign_ids: []
     )
     stub_result = Struct.new(:selected_campaign, :selected_character).new(campaign, character)
 

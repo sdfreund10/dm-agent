@@ -9,7 +9,6 @@ module CLI
     attr_reader :campaigns, :selected_campaign, :selected_character
 
     def initialize
-      @campaigns = Campaign.all
       @characters = Character.all
     end
 
@@ -22,7 +21,7 @@ module CLI
     def select_campaign
       selection = select_option("Select a campaign:", campaign_options)
       if selection.new?
-        @selected_campaign = CampaignCreation.run
+        @selected_campaign = CampaignCreation.run(@selected_character)
       else
         @selected_campaign = selection
       end
@@ -80,8 +79,23 @@ module CLI
   class CampaignCreation < BaseInterface
     include Inputs
 
-    def run
-      raise NotImplementedError, "Not implemented"
+    def run(selected_character)
+      tone = select_tone
+      genre = select_genre
+      campaign = Campaign.generate(genre: genre, tone: tone, character: selected_character)
+      puts "Campaign created: #{campaign.inspect}"
+      selected_character.join_campaign(campaign)
+      campaign
+    end
+
+    def select_tone
+      options = Campaign::TONES
+      select_option("Select an overall tone for the world and campaign:", options)
+    end
+
+    def select_genre
+      options = Campaign::GENRES
+      select_option("Select a genre for your adventure:", options)
     end
   end
 end
