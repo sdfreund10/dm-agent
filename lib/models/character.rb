@@ -1,15 +1,18 @@
 require "lib/models/concerns/file_saveable"
 require "lib/agents/character_backstory_agent"
+require "lib/models/concerns/character_classes"
+require "lib/models/campaign"
 
 # Store Characters across multiple campaigns?
 class Character
+  include CharacterClasses
   include FileSaveable
   attr_accessor :id, :name, :dnd_class, :species, :level, :backstory, :campaigns, :summary
 
   def initialize(id: SecureRandom.uuid, name:, dnd_class:, species:, level:, backstory: nil, summary: nil, campaign_ids: [])
     @id = id
     @name = name
-    @dnd_class = dnd_class
+    @dnd_class = CLASSES[dnd_class] || CLASSES["Fighter"]
     @species = species
     @level = level
     @backstory = backstory
@@ -17,8 +20,16 @@ class Character
     @campaign_ids = campaign_ids
   end
 
+  def armour_class
+    dnd_class.ac
+  end
+
+  def max_hp
+    level * (rand(1..dnd_class.hp_die) + dnd_class.con_mod)
+  end
+
   def inspect
-    base = "#{name} - Lvl #{level} #{species} #{dnd_class}"
+    base = "#{name} - Lvl #{level} #{species} #{dnd_class.name}"
     if summary
       "#{base} - #{summary}"
     else
@@ -38,7 +49,7 @@ class Character
     {
       id: id,
       name: name,
-      dnd_class: dnd_class,
+      dnd_class: dnd_class.name,
       species: species,
       level: level,
       backstory: backstory,
@@ -64,6 +75,9 @@ class Character
     @campaign_ids << campaign.id
     campaigns.push(campaign)
     save
+  end
+
+  def max_hp
   end
 
   # Trying Null object pattern to handle the "Create a New Character" option.

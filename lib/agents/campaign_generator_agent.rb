@@ -67,6 +67,7 @@ class CampaignGeneratorAgent
     INPUT
   end
 
+  # TODO: Way too many of the campaigns take place in "Oakhaven" and deal with "the blight". Need to add some veriablility. Maybe just adjust the temperature?
   SYSTEM_INSTRUCTIONS = <<~SYSTEM
     You are an Expert Dungeon Master building a short campaign for new party.
     You will be given the character's backstory and a tone and genre for the campaign.

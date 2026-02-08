@@ -1,7 +1,6 @@
 require "cli/base_interface"
 require "cli/inputs"
 require "lib/agents/campaign_agent"
-
 module CLI
   class Campaign < BaseInterface
     include Inputs
@@ -14,20 +13,16 @@ module CLI
 
     def run
       puts "Getting your adventure ready..."
-      puts "--------------------------------"
-      starting_message = @campaign_agent.start!
-      puts starting_message
-      puts "--------------------------------"
 
-      while true
-        message = get_input("What would you like to do? (type 'exit' to end the campaign)")
-        if message.downcase == "exit"
+      @campaign_agent.run_loop do |system_message|
+        puts "--------------------------------"
+        puts system_message
+        puts "--------------------------------"
+        user_input = get_input("What would you like to do? (type 'exit' to end the campaign)")
+        if user_input.downcase == "exit"
           break
         else
-          response = @campaign_agent.run(message: message)
-          puts "--------------------------------"
-          puts response
-          puts "--------------------------------"
+          user_input
         end
       end
     end

@@ -56,7 +56,7 @@ module CLI
 
     def run
       character_name = get_input("What is your character's name?")
-      character_class = select_option("What is your character's class?", ["Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Wizard"])
+      character_class = select_option("What is your character's class?", ::Character::CLASSES.keys)
       character_species = select_option("What is your character's species?", ["Human", "Elf", "Dwarf", "Halfling", "Gnome", "Half-Elf", "Half-Orc", "Tiefling", "Aasimar", "Dragonborn"])
       player_level = select_option("What is your character's level?", ["3", "6", "9", "12"])
       character = Character.new(name: character_name, dnd_class: character_class, species: character_species, level: player_level, backstory: nil)

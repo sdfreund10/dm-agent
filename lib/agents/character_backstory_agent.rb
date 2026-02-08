@@ -25,6 +25,7 @@ class CharacterBackstoryAgent
     string :summary, description: "A short, one sentence summary of the character's backstory and/or personality."
   end
 
+  # NOTE: The agent is OBSESSED with giving every character a "smooth river stone". Work on this prompt to develop some variety, or just ignore trinkets.
   SYSTEM_INSTRUCTIONS = <<~SYSTEM
     You will be provided the basic details of a DnD character.
     Generate a brief backstory for the charactdr.

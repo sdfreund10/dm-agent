@@ -34,20 +34,6 @@ class CampaignAgentTest < Minitest::Test
     assert_equal content, agent.log.messages[1][:message]
   end
 
-  def test_start_adds_system_message_to_log_and_returns_content
-    campaign = build_campaign
-    character = build_character
-    agent = CampaignAgent.new(campaign, character)
-    $stdout = StringIO.new
-
-    content = agent.start!
-
-    assert_equal TestSupport::LLMStub::DEFAULT_LORE_CONTENT, content
-    assert_equal 1, agent.log.messages.size
-    assert_equal "system", agent.log.messages[0][:type]
-    assert_equal content, agent.log.messages[0][:message]
-  end
-
   def test_starting_prompt_includes_campaign_and_character_details
     campaign = build_campaign(name: "Epic Quest", genre: "Heroic Epic")
     character = build_character(name: "Aragorn", backstory: "A ranger from the north")
