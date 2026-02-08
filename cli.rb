@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift(File.expand_path(".", __dir__))
 require "lib/models/campaign"
 require "cli/campaign_selection"
-require "lib/agents/campaign_creator_agent"
+require "cli/campaign"
 
 class CLI::Main
   def self.run
@@ -13,7 +13,8 @@ class CLI::Main
     campaign_selection = ::CLI::CampaignSelection.run
     puts "Campaign selected: #{campaign_selection.selected_campaign.name}"
     puts "Character selected: #{campaign_selection.selected_character.name}"
-    # show_main_menu
+
+    CLI::Campaign.new(campaign_selection.selected_campaign, campaign_selection.selected_character).run
   end
 
   private

@@ -12,10 +12,10 @@ class Campaign
 
   # Heoric Epic: Classic heroic fantasy with a clear and grand goal.
   # Politcal Noir: Heavily social adventure focussed on uncovering conspiracies and taking sides.
-  # Mind-Bending Mystery: Uncover mysterious forces rooted in magic and the natural world.
+  # [REMOVED] Mind-Bending Mystery: Uncover mysterious forces rooted in magic and the natural world.
   # Treasure Hunt: A quest for a hidden treasure or magical artifact.
   # Survival Adventure: An adventure focused on survival and exploration in a dangerous world.
-  GENRES = ["Heroic Epic", "Politcal Noir", "Mind-Bending Mystery", "Treasure Hunt", "Survival Adventure"]
+  GENRES = ["Heroic Epic", "Politcal Noir", "Treasure Hunt", "Survival Adventure"]
   TONES = ["Lighthearted", "Optimistic", "Neutral", "Dramatic", "Bleak"]
 
   attr_reader :id
@@ -54,6 +54,27 @@ class Campaign
       locations: locations,
       rumors: rumors
     }
+  end
+
+  def to_prompt
+    <<~PROMPT
+      ### Campaign Details
+       Name: #{name}
+       Genre: #{genre}
+       Tone: #{tone}
+
+      ### World & Plot Info: #{world_info}
+       #{world_info}
+      #### Inciting Incident
+       #{inciting_incident}
+      #### End Goal:
+       #{end_goal}
+
+       Primary Antagonist: #{primary_antagonist}
+       NPCs: #{npcs.join(", ")}
+       Locations: #{locations.join(", ")}
+       Rumors: #{rumors.join(", ")}
+    PROMPT
   end
 
   def new?

@@ -5,7 +5,7 @@
 
 module TestSupport
   class LLMStub
-    Response = Struct.new(:content, keyword_init: true)
+    Response = Struct.new(:content, :input_tokens, :output_tokens, keyword_init: true)
 
     DEFAULT_BACKSTORY_CONTENT = {
       "backstory" => "A realm of ancient magic and rising darkness.",
@@ -39,13 +39,18 @@ module TestSupport
     # TODO: store the prompts in an place both the agent and this stub can use it.
     #    Then check for the exact prompt content, return the correct response for the prompt, or raise for unknown prompts.
     def ask(prompt)
+      content = response_content_for(prompt)
+      Response.new(content: content, input_tokens: 0, output_tokens: 0)
+    end
+
+    def response_content_for(prompt)
       # generate_backstory calls .ask("Generate a backstory for the campaign.")
       if prompt.to_s.include?("Generate a backstory")
-        Response.new(content: self.class.backstory_content.dup)
+        self.class.backstory_content.dup
       elsif prompt.to_s.include?("You will be provided the basic details of a DnD character.")
-        Response.new(content: DEFAULT_CHARACTER_CONTENT.dup)
+        DEFAULT_CHARACTER_CONTENT.dup
       else
-        Response.new(content: self.class.lore_content.dup)
+        self.class.lore_content.dup
       end
     end
 
@@ -59,7 +64,7 @@ module TestSupport
       end
 
       def ask(_question)
-        Response.new(content: @klass.lore_content.dup)
+        Response.new(content: @klass.lore_content.dup, input_tokens: 0, output_tokens: 0)
       end
     end
   end

@@ -39,14 +39,14 @@ module CLI
     private
 
     def character_options
-      @characters + [Character::NewCharacter.new]
+      @characters + [::Character::NewCharacter.new]
     end
 
     def campaign_options
       if @selected_character.nil?
         []
       else
-        @selected_character.campaigns + [Campaign::NewCampaign.new]
+        @selected_character.campaigns + [::Campaign::NewCampaign.new]
       end
     end
   end
@@ -82,19 +82,20 @@ module CLI
     def run(selected_character)
       tone = select_tone
       genre = select_genre
-      campaign = Campaign.generate(genre: genre, tone: tone, character: selected_character)
+      puts "Generating campaign..."
+      campaign = ::Campaign.generate(genre: genre, tone: tone, character: selected_character)
       puts "Campaign created: #{campaign.inspect}"
       selected_character.join_campaign(campaign)
       campaign
     end
 
     def select_tone
-      options = Campaign::TONES
+      options = ::Campaign::TONES
       select_option("Select an overall tone for the world and campaign:", options)
     end
 
     def select_genre
-      options = Campaign::GENRES
+      options = ::Campaign::GENRES
       select_option("Select a genre for your adventure:", options)
     end
   end
