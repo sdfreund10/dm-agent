@@ -10,13 +10,20 @@ class CampaignAgent
     @campaign = campaign
     @player_character = player_character
     @battle_manager = BattleManager.new(player_character)
+    @battle_mode = false
     @chat = RubyLLM.chat.with_instructions(SYSTEM_INSTRUCTIONS).with_tools(
       SkillCheck,
-      AddAlly.new(@battle_manager),
-      AddEnemy.new(@battle_manager),
-      EndBattle.new(@battle_manager),
-      NPCAttack.new(@battle_manager)
-    )
+      AddAlly.new(@battle_manager, self),
+      AddEnemy.new(@battle_manager, self),
+      EndBattle.new(@battle_manager, self),
+      UserAttack.new(@battle_manager, self),
+      NPCAttack.new(@battle_manager, self),
+      HealCharacter.new(@battle_manager, self)
+    ).on_end_message do |message|
+      if @battle_mode && message.role == :assistant && message.content.strip.length > 0
+        puts message.content
+      end
+    end
     @log = Log.new(campaign_id: campaign.id, player_character_id: player_character.id, messages: [])
     @input_token_count = 0
   end
@@ -50,7 +57,8 @@ class CampaignAgent
     end
   end
 
-  # Do more logging in "Battle Mode".
+  # During battle, there is are a lot of tool calls that can get lost if we just print the last message to the user.
+  # This prints out the intermediate messages so the user gets a full picture of what happens each turn of combat.
   def enable_battle_mode!
     @battle_mode = true
   end
@@ -62,7 +70,7 @@ class CampaignAgent
   def run_test(initial_message:)
     @chat = @chat.on_tool_call do |tool_call|
       # Called when the AI decides to use a tool
-      # puts "Calling tool: #{tool_call.name}"
+      # puts "Calling tool: #{tool_call.name} with arguments: #{tool_call.arguments}"
       # puts "Arguments: #{tool_call.arguments}"
     end
     .on_tool_result do |result|
@@ -73,7 +81,11 @@ class CampaignAgent
       # puts "Received response from AI..."
     end
     .on_end_message do |message|
-      # puts "Message: #{message&.content}"
+      # puts "----#{message.role} (#{message.role == :assistant})----"
+      if @battle_mode && message.role == :assistant && message.content.strip.length > 0
+        puts message.content
+      end
+      # puts "Message: (#{message.role}) #{message&.content}"
       # puts message.class, message&.content.strip.length
       # puts "Finished processing AI actions. Proceeding..."
       # puts "--------------------------------"
@@ -81,6 +93,11 @@ class CampaignAgent
       # puts message.content
       # puts "--------------------------------"
     end
+    # .on_end_message do |message|
+    #   if @battle_mode && message.role == "assistant"
+    #     puts message.content
+    #   end
+    # end
 
     puts "Testing agent with following instructions:"
     puts "--------------------------------"
@@ -180,6 +197,14 @@ class CampaignAgent
       self
     end
 
+    def adjust_hp(character_id:, hp_change:)
+      character = characters.find { |character| character.id == character_id }
+      if character.nil?
+        return "Character not found. Try again with the correct id."
+      end
+      character.hp += hp_change
+    end
+
     def attack_character(character_id:, damage:, attack_roll:)
       character = characters.find { |character| character.id == character_id }
       if character.nil?
@@ -196,6 +221,7 @@ class CampaignAgent
 
 
     def to_prompt
+      # IDEA: Have the enemy HP map to descriptions like "a few wounds", "pretty hurt", "heavily wounded", "near death", "dead".
       <<~PROMPT
         ## Player Party
         #{format_character(@player_character)}
@@ -305,8 +331,21 @@ class CampaignAgent
     end
   end
 
-  class PlayerCharacterAttack < BattleToolBase
-    description "Attack a character with the player's character. The player will provide th attack roll and damage."
+  class HealCharacter < BattleToolBase
+    description "Heal a character by a given amount."
+    params do
+      integer :character_id, description: "The id of the character to adjust."
+      integer :hp_change, description: "How much to heal the character by. Should be positive."
+    end
+
+    def execute(character_id:, hp_change:)
+      @battle_manager.adjust_hp(character_id: character_id, hp_change: hp_change)
+      { success: true, status: @battle_manager.to_prompt }
+    end
+  end
+
+  class UserAttack < BattleToolBase
+    description "Use this when the user attacks an enemy. The user will provide the attack roll and damage."
     params do
       integer :character_id, description: "The id of the character to attack."
       integer :attack_roll, description: "The player-provided attack roll."
