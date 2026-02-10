@@ -10,7 +10,7 @@ class CharacterBackstoryAgent
   end
 
   def generate
-    response = RubyLLM.chat.with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CharacterBackstorySchema).ask(character.to_prompt(include_backstory: false))
+    response = RubyLLM.chat.with_temperature(1.5).with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CharacterBackstorySchema).ask(character.to_prompt(include_backstory: false))
     character.backstory = response.content["backstory"]
     character.summary = response.content["summary"]
     character

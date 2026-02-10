@@ -253,21 +253,17 @@ class CampaignAgent
     end
   end
 
-  # CAN I ROLL DAMAGE AS PART OF THE ATTACK TOOL?
-  # class DamageRoll < RubyLLM::Tool
-  #   description "Roll damage for an NPC attack."
-  #   params do
-  #     integer :die_size, description: "The size of the die to roll. 4 for weak attacks, 10 or 12 for very strong attacks.", enum: [4, 6, 8, 10, 12]
-  #     integer :num_dice, description: "How many dice to roll. Usually 1 per attack, but can roll multiple attacks at once.", default: 1
-  #   end
+  class UserSkillCheck < RubyLLM::Tool
+    description "Check the result of a skill check by the user. The user will provide the check threshold and bonus."
+    params do
+      integer :check_threshold, description: "The threshold for the check. (e.g., 15 for hard checks, 10 for medium checks, 5 for easy checks, etc.)"
+      integer :roll, description: "The roll provided by the user."
+    end
 
-  #   def execute(damage:)
-  #     min_damage = num_dice
-  #     max_damage = num_dice * die_size
-  #     damage = rand(min_damage..max_damage)
-  #     { key: "#{num_dice}d#{die_size}", damage: damage }
-  #   end
-  # end
+    def execute(check_threshold:, roll:)
+      { success: roll >= check_threshold }
+    end
+  end
 
   class BattleToolBase < RubyLLM::Tool
     def initialize(battle_manager, campaign_agent)

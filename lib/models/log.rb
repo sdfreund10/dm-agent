@@ -12,10 +12,16 @@ class Log
     @campaign_id = campaign_id
     @player_character_id = player_character_id
     @messages = messages
+    @last_message_at = Time.now
   end
 
   def add_message(type:, message:)
-    messages << { type: type, message: message }
+    @last_message_at = Time.now
+    messages << {
+      type: type,
+      message_content: message.content,
+      timestamp: Time.now,
+    }
     save
   end
 

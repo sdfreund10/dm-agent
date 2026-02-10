@@ -34,7 +34,7 @@ class CampaignGeneratorAgent
   end
 
   def generate
-    chat = RubyLLM.chat.with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CampaignGeneratorSchema)
+    chat = RubyLLM.chat.with_temperature(1.5).with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CampaignGeneratorSchema)
     campaign_info = chat.ask(input).content
     name_response = chat.with_schema(nil).ask("Considering the overall plot, generate a short, 3-8 word name for the campaign.")
     campaign_info.merge!(
