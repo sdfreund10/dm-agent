@@ -1,0 +1,47 @@
+<% @title = "Home" %>
+<div class="prompt">Campaigns</div>
+
+<% if @campaigns.empty? %>
+  <p class="character-meta">No campaigns yet.</p>
+<% else %>
+  <ul class="character-list">
+    <% @campaigns.each do |campaign| %>
+      <li>
+        <span>
+          <span class="character-name"><%= h(campaign.name) %></span>
+        </span>
+        <span class="list-actions">
+          <a href="/campaigns/<%= campaign.id %>" class="btn">View</a>
+          <form action="/campaigns/<%= campaign.id %>" method="post" class="delete-form" data-turbo-confirm="Delete this campaign?">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="btn btn-icon" title="Delete campaign" aria-label="Delete campaign"><svg class="icon-trash" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+          </form>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<a href="/campaigns/new" class="block-link">+ Create a new campaign</a>
+
+<div class="divider">—</div>
+<div class="prompt">Characters</div>
+<ul class="character-list">
+  <% @characters.each do |char| %>
+    <li>
+      <span>
+        <span class="character-name"><%= char.name %></span>
+        <span class="character-meta"> — Lvl <%= char.level %> <%= char.species %> <%= char.dnd_class.name %></span>
+      </span>
+      <span class="list-actions">
+        <a href="/characters/<%= char.id %>" class="btn">View</a>
+        <form action="/characters/<%= char.id %>" method="post" class="delete-form" data-turbo-confirm="Delete this character?">
+          <input type="hidden" name="_method" value="delete">
+          <button type="submit" class="btn btn-icon" title="Delete character" aria-label="Delete character"><svg class="icon-trash" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+        </form>
+      </span>
+    </li>
+  <% end %>
+</ul>
+
+<div class="divider">—</div>
+<a href="/characters/new" class="block-link">+ Create a new character</a>

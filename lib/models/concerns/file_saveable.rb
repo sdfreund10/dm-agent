@@ -21,6 +21,10 @@ module FileSaveable
     FileUtils.mkdir_p(model.data_location)
   end
 
+  def delete
+    self.class.delete(id)
+  end
+
   module ClassMethods
     # IDEA: Can I define a set of attributes via a class method and automatically generate initializer & to_hash?
 
@@ -59,7 +63,7 @@ module FileSaveable
     end
 
     def _load(file_name)
-      record_data = JSON.parse(File.read(file_name)).transform_keys(&:to_sym)
+      record_data = JSON.parse(File.read(file_name, encoding: Encoding::UTF_8)).transform_keys(&:to_sym)
       new(**record_data)
     end
 
@@ -69,6 +73,10 @@ module FileSaveable
 
     def create(attributes)
       new(**attributes).save
+    end
+
+    def delete(id)
+      FileUtils.rm_f("#{data_location}/#{id}.json")
     end
   end
 end

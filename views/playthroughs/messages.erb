@@ -1,0 +1,29 @@
+<% messages = @playthrough.displayable_messages %>
+<turbo-frame id="playthrough-messages">
+  <% messages.each do |msg| %>
+    <%= erb :"playthroughs/_message", locals: { message: msg } %>
+  <% end %>
+  <% if (messages || []).empty? %>
+    <p class="character-meta">No messages yet.</p>
+  <% end %>
+</turbo-frame>
+
+<script>
+  document.addEventListener("turbo:before-stream-render", function(event) {
+    const stream = event.target;
+    const action = stream.getAttribute("action");
+    const targetId = stream.getAttribute("target");
+
+    if (action === "append" && targetId === "playthrough-messages") {
+      // Let Turbo perform the append first
+      requestAnimationFrame(function() {
+        const container = document.getElementById("playthrough-messages");
+        if (!container) return;
+        const last = container.lastElementChild;
+        if (!last) return;
+
+        last.scrollIntoView({ behavior: "smooth", block: "end" });
+      });
+    }
+  });
+</script>

@@ -1,0 +1,8 @@
+<% messages = @playthrough.last_exchange %>
+<turbo-stream action="append" target="playthrough-messages">
+  <template>
+    <% messages.each do |msg| %>
+      <%= erb :"playthroughs/_message", locals: { message: msg } %>
+    <% end %>
+  </template>
+</turbo-stream>

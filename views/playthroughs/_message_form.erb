@@ -1,0 +1,7 @@
+<% pt = @playthrough %>
+<form class="playthrough-input-form" action="<%= "/playthroughs/#{pt.id}/messages" %>" method="post" data-turbo-stream="true">
+  <textarea name="message" rows="2" placeholder="Type your message…" class="playthrough-textarea" required></textarea>
+  <button type="submit" class="btn btn-icon playthrough-send" title="Send" aria-label="Send message">
+    <svg class="icon-send" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+  </button>
+</form>

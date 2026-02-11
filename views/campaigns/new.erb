@@ -1,0 +1,32 @@
+<% @title = "New campaign" %>
+<div class="prompt">Create a new campaign.</div>
+
+<form action="/campaigns" method="post" data-turbo="true" data-loading-label="Generating campaign…">
+  <label for="genre">Genre</label>
+  <select id="genre" name="genre" required>
+    <% @genres.each do |g| %>
+      <option value="<%= h(g) %>"><%= h(g) %></option>
+    <% end %>
+  </select>
+
+  <label for="tone">Tone</label>
+  <select id="tone" name="tone" required>
+    <% @tones.each do |t| %>
+      <option value="<%= h(t) %>"><%= h(t) %></option>
+    <% end %>
+  </select>
+
+  <label for="stakes">Stakes</label>
+  <select id="stakes" name="stakes" required>
+    <% @stakes.each do |s| %>
+      <option value="<%= h(s) %>"><%= h(s) %></option>
+    <% end %>
+  </select>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Generate campaign</button>
+    <a href="/" class="btn">Cancel</a>
+  </div>
+</form>
+
+<p class="character-meta" style="margin-top: 1rem;">Campaign generation may take a moment.</p>

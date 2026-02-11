@@ -17,6 +17,7 @@ class Character
     @level = level
     @backstory = backstory
     @summary = summary
+    # TODO: Can probably drop once Campaign Chats are fully implemented.
     @campaign_ids = campaign_ids
   end
 
@@ -26,6 +27,10 @@ class Character
 
   def max_hp
     level * (rand(1..dnd_class.hp_die) + dnd_class.con_mod)
+  end
+
+  def details
+    "#{name} - Lvl #{level} #{species} #{dnd_class.name}"
   end
 
   def inspect
@@ -58,6 +63,17 @@ class Character
     }
   end
 
+  def difficulty_level
+    case level
+    when 1..5
+      "Low"
+    when 5..10
+      "Medium"
+    when 11..
+      "High"
+    end
+  end
+
   def generate_backstory
     CharacterBackstoryAgent.generate(character: self)
     self
@@ -67,17 +83,16 @@ class Character
     false
   end
 
+  # TODO: Can probably drop once Campaign Chats are fully implemented.
   def campaigns
     @campaigns ||= @campaign_ids.map { |id| Campaign.find(id) }
   end
 
+  # TODO: Can probably drop once Campaign Chats are fully implemented.
   def join_campaign(campaign)
     @campaign_ids << campaign.id
     campaigns.push(campaign)
     save
-  end
-
-  def max_hp
   end
 
   # Trying Null object pattern to handle the "Create a New Character" option.

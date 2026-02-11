@@ -19,10 +19,10 @@ class Campaign
   TONES = ["Lighthearted", "Optimistic", "Neutral", "Dramatic", "Bleak"]
 
   attr_reader :id
-  attr_accessor :name, :genre, :tone, :world_info, :inciting_incident, :end_goal, :primary_antagonist, :npcs, :locations, :rumors
+  attr_accessor :name, :genre, :tone, :world_info, :inciting_incident, :end_goal, :primary_antagonist, :npcs, :locations, :rumors, :hook
 
   # Maybe some of these attributes should be in separate classes. Revist as more features are added.
-  def initialize(id: SecureRandom.uuid, name:, genre:, tone:, world_info:, inciting_incident:, end_goal:, primary_antagonist:, npcs:, locations:, rumors:)
+  def initialize(id: SecureRandom.uuid, name:, genre: nil, tone: nil, world_info:, inciting_incident:, end_goal:, primary_antagonist:, npcs:, locations:, rumors:, hook: "", log_id: nil)
     @id = id
     @name = name
     @genre = genre
@@ -34,6 +34,8 @@ class Campaign
     @npcs = npcs
     @locations = locations
     @rumors = rumors
+    @hook = hook
+    @log_id = log_id
   end
 
   def inspect
@@ -52,7 +54,8 @@ class Campaign
       primary_antagonist: primary_antagonist,
       npcs: npcs,
       locations: locations,
-      rumors: rumors
+      rumors: rumors,
+      hook: hook
     }
   end
 
@@ -81,8 +84,14 @@ class Campaign
     false
   end
 
-  def self.generate(genre:, tone:, character:)
-    CampaignGeneratorAgent.new(genre: genre, tone: tone, character: character).generate
+  def campaign_chats
+    CampaignChat.for_campaign(id)
+  end
+
+  # Note: Low stakes really suck. They might be too boring to be worthwhile
+  def self.generate(genre:, tone:, character: nil, stakes: nil)
+    stakes ||= character&.difficulty_level || "Medium"
+    CampaignGeneratorAgent.new(genre: genre, tone: tone, stakes: stakes).generate
   end
 
   class NewCampaign

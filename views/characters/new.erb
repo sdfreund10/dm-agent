@@ -1,0 +1,60 @@
+<% @title = "New character" %>
+<div class="prompt">Create a new character.</div>
+
+<form action="/characters" method="post" data-turbo="true" data-loading-label="Creating character…">
+  <label for="name">Name</label>
+  <input type="text" id="name" name="name" required autofocus>
+
+  <label for="dnd_class">Class</label>
+  <select id="dnd_class" name="dnd_class" required>
+    <% @character_classes.each do |c| %>
+      <option value="<%= c %>"><%= c %></option>
+    <% end %>
+  </select>
+
+  <label for="species">Species</label>
+  <select id="species" name="species" required>
+    <% @species.each do |s| %>
+      <option value="<%= s %>"><%= s %></option>
+    <% end %>
+  </select>
+
+  <label for="level">Level</label>
+  <select id="level" name="level" required>
+    <% @levels.each do |l| %>
+      <option value="<%= l %>"><%= l %></option>
+    <% end %>
+  </select>
+
+  <div id="backstory-auto" class="backstory-option">
+    <p class="character-meta" style="margin-top: 1rem;">We will automatically generate a backstory for your character.</p>
+    <button type="button" class="link-style" id="show-backstory-field" style="margin-top: 0.5rem;">Write my own backstory instead</button>
+  </div>
+  <div id="backstory-custom" class="backstory-option hidden">
+    <label for="backstory">Backstory</label>
+    <textarea id="backstory" name="backstory" rows="4" placeholder="Enter your character's backstory."></textarea>
+    <button type="button" class="link-style" id="hide-backstory-field" style="margin-top: 0.5rem;">Use automatic backstory instead</button>
+  </div>
+  <script>
+    (function() {
+      var auto = document.getElementById("backstory-auto");
+      var custom = document.getElementById("backstory-custom");
+      var field = document.getElementById("backstory");
+      document.getElementById("show-backstory-field").onclick = function() {
+        auto.classList.add("hidden");
+        custom.classList.remove("hidden");
+        field.focus();
+      };
+      document.getElementById("hide-backstory-field").onclick = function() {
+        custom.classList.add("hidden");
+        auto.classList.remove("hidden");
+        field.value = "";
+      };
+    })();
+  </script>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Create character</button>
+    <a href="/" class="btn">Cancel</a>
+  </div>
+</form>

@@ -27,6 +27,8 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.18.0)
+    kramdown (2.5.2)
+      rexml (>= 3.4.4)
     logger (1.7.0)
     marcel (1.1.0)
     minitest (5.27.0)
@@ -35,15 +37,29 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
+    multi_json (1.19.1)
     multipart-post (2.4.1)
+    mustermann (3.0.4)
+      ruby2_keywords (~> 0.0.1)
     net-http (0.9.1)
       uri (>= 0.11.1)
+    nio4r (2.7.5)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
     psych (5.3.1)
       date
       stringio
+    puma (6.6.1)
+      nio4r (~> 2.0)
+    rack (3.2.4)
+    rack-protection (4.2.1)
+      base64 (>= 0.1.0)
+      logger (>= 1.6.0)
+      rack (>= 3.0.0, < 4)
+    rack-session (2.1.1)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0)
     rake (13.3.1)
     rdoc (7.1.0)
       erb
@@ -51,7 +67,9 @@ GEM
       tsort
     reline (0.6.3)
       io-console (~> 0.5)
+    rexml (3.4.4)
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     ruby_llm (1.11.0)
       base64
       event_stream_parser (~> 1)
@@ -63,7 +81,21 @@ GEM
       ruby_llm-schema (~> 0.2.1)
       zeitwerk (~> 2)
     ruby_llm-schema (0.2.5)
+    sinatra (4.2.1)
+      logger (>= 1.6.0)
+      mustermann (~> 3.0)
+      rack (>= 3.0.0, < 4)
+      rack-protection (= 4.2.1)
+      rack-session (>= 2.0.0, < 3)
+      tilt (~> 2.0)
+    sinatra-contrib (4.2.1)
+      multi_json (>= 0.0.2)
+      mustermann (~> 3.0)
+      rack-protection (= 4.2.1)
+      sinatra (= 4.2.1)
+      tilt (~> 2.0)
     stringio (3.2.0)
+    tilt (2.7.0)
     tsort (0.2.0)
     uri (1.1.1)
     zeitwerk (2.7.4)
@@ -75,10 +107,15 @@ PLATFORMS
 DEPENDENCIES
   debug (~> 1.11)
   dotenv (~> 3.2)
+  kramdown (~> 2.4)
   minitest (~> 5.22)
   minitest-reporters (~> 1.6)
+  puma (~> 6.0)
+  rack (~> 3.0)
   rake (~> 13.0)
   ruby_llm (~> 1.11)
+  sinatra (~> 4.0)
+  sinatra-contrib (~> 4.0)
 
 BUNDLED WITH
    2.7.1

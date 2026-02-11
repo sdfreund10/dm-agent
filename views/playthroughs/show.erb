@@ -1,0 +1,45 @@
+<% pt = @playthrough %>
+<% @layout_wide = true %>
+<% campaign_name = pt.campaign ? h(pt.campaign.name) : 'Campaign' %>
+<% @title = "Playthrough — #{campaign_name}" %>
+<div class="page-header">
+  <span class="prompt"><%= campaign_name %></span>
+  <a href="/campaigns/<%= pt.campaign_id %>" class="btn-subtle">Save &amp; Exit</a>
+</div>
+
+<div class="playthrough-body">
+  <section class="playthrough-chat">
+    <div class="section-title">Chat</div>
+    <div class="playthrough-messages">
+      <turbo-frame id="playthrough-messages" src="<%= "/playthroughs/#{pt.id}/messages" %>">
+        <%# TODO: Add loading indicator %>
+      </turbo-frame>
+    </div>
+    <%= erb :"playthroughs/_message_form", layout: false %>
+  </section>
+
+  <aside class="playthrough-sidebar">
+    <div class="section-title">Campaign hook</div>
+    <% if pt.campaign && pt.campaign.hook && !pt.campaign.hook.to_s.strip.empty? %>
+      <div class="markdown-prose playthrough-sidebar-block"><%= markdown(pt.campaign.hook) %></div>
+    <% else %>
+      <p class="character-meta">—</p>
+    <% end %>
+
+    <div class="section-title">Character</div>
+    <div class="playthrough-sidebar-block">
+      <% if pt.player_character %>
+        <p class="character-name"><%= h(pt.player_character.details) %></p>
+        <% if pt.player_character.summary && !pt.player_character.summary.to_s.strip.empty? %>
+          <div class="markdown-prose"><%= markdown(pt.player_character.summary) %></div>
+        <% else %>
+          <p class="character-meta">No summary.</p>
+        <% end %>
+      <% else %>
+        <p class="character-meta">—</p>
+      <% end %>
+    </div>
+  </aside>
+</div>
+
+<div class="divider">—</div>

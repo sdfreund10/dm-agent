@@ -1,0 +1,18 @@
+<% c = @character %>
+<% @title = c.name %>
+<div class="prompt"><%= [c.name, "Lvl #{c.level}", c.species, c.dnd_class.name].join(" - ") %></div>
+
+<div class="divider">—</div>
+<% if c.summary %>
+  <div class="section-title">Summary</div>
+  <div class="markdown-prose"><%= markdown(c.summary) %></div>
+  <div class="divider">—</div>
+<% end %>
+
+<% if c.backstory %>
+  <div class="section-title">Full Backstory</div>
+  <div class="markdown-prose"><%= markdown(c.backstory) %></div>
+  <div class="divider">—</div>
+<% end %>
+
+<a href="/" class="block-link">&larr; Back to character list</a>

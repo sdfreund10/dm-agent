@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "rack/handler/puma"
+require_relative "../app"
+Rack::Handler::Puma.run(DmAgentApp, Port: ENV.fetch("PORT", 9292).to_i, Host: "0.0.0.0")

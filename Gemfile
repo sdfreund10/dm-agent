@@ -11,3 +11,9 @@ gem "ruby_llm", "~> 1.11"
 gem "dotenv", "~> 3.2"
 
 gem "debug", "~> 1.11"
+
+gem "rack", "~> 3.0"
+gem "puma", "~> 6.0"
+gem "kramdown", "~> 2.4"
+gem "sinatra", "~> 4.0"
+gem "sinatra-contrib", "~> 4.0"

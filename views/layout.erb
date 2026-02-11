@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= @title || "dm-agent" %></title>
+    <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8/dist/turbo.es2017-umd.min.js" defer></script>
+    <style>
+      :root {
+        --bg: #0c0e0f;
+        --surface: #131619;
+        --border: #2a2f33;
+        --text: #c9d1d4;
+        --text-dim: #6e7681;
+        --accent: #7ee787;
+        --accent-dim: #3fb950;
+        --cursor: #58a6ff;
+        --font-mono: "SF Mono", "Fira Code", "Consolas", "Monaco", monospace;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .terminal {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem;
+      }
+      /* TODO: For fun, it'd be neat to have an animation of the screen expanding out from the center, kinda like a CRT TV*/
+      .terminal.terminal--wide {
+        max-width: 960px;
+      }
+      .prompt {
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+      .prompt::before { content: "> "; color: var(--text-dim); }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover { text-decoration: underline; color: var(--accent-dim); }
+      ul { list-style: none; padding: 0; margin: 0; }
+      .character-list li {
+        padding: 0.25rem 0;
+        line-height: 1.4;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .character-list li:last-child { border-bottom: none; }
+      .character-name { font-weight: 600; }
+      .character-meta { color: var(--text-dim); font-size: 0.9em; }
+      .campaign-hook { font-size: 0.8em; }
+      .campaign-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+      .campaign-table th, .campaign-table td { padding: 0.5rem 0.5rem 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; }
+      .campaign-table th { color: var(--accent-dim); font-size: 0.9em; }
+      .campaign-table tr:last-child td { border-bottom: none; }
+      .btn {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        background: var(--surface);
+        color: var(--accent);
+        border: 1px solid var(--border);
+        font-family: inherit;
+        font-size: inherit;
+        cursor: pointer;
+      }
+      .btn:hover { border-color: var(--accent); }
+      .btn-icon { padding: 0.35rem; display: inline-flex; align-items: center; justify-content: center; }
+      .btn-icon .icon-trash { display: block; }
+      .btn-icon:hover { color: var(--accent-dim); border-color: var(--accent-dim); }
+      .list-actions { display: flex; align-items: center; gap: 0.5rem; }
+      .page-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .page-header .prompt { margin-bottom: 0; }
+      .delete-form { display: inline; margin: 0; }
+      .btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+      .btn-outline-sm {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.85em;
+        background: transparent;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        font-family: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn-outline-sm:hover { border-color: var(--accent-dim); color: var(--accent-dim); }
+      .btn-subtle {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85em;
+        background: transparent;
+        color: var(--text-dim);
+        border: none;
+        font-family: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn-subtle:hover { color: var(--accent-dim); }
+      .link-style {
+        background: none; border: none; color: var(--accent); font-family: inherit; font-size: inherit;
+        cursor: pointer; padding: 0; text-decoration: none;
+      }
+      .link-style:hover { text-decoration: underline; color: var(--accent-dim); }
+      .hidden { display: none; }
+      .btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
+      form label { display: block; margin-top: 1rem; color: var(--text-dim); }
+      form input, form select, form textarea {
+        width: 100%;
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: inherit;
+      }
+      form input:focus, form select:focus, form textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .form-actions { margin-top: 1.5rem; }
+      .form-actions .btn { margin-right: 0.5rem; }
+      .block-link { display: block; padding: 0.5rem 0; }
+      .divider { margin: 1rem 0; color: var(--text-dim); }
+      .error-page { text-align: center; padding: 3rem 1rem; }
+      .section-title { color: var(--accent-dim); font-size: 1em; margin-bottom: 0.5rem; }
+      .markdown-prose { color: var(--text-dim); font-size: 0.875em; }
+      .markdown-prose p { margin: 0.5rem 0; }
+      .markdown-prose p:first-child { margin-top: 0; }
+      .markdown-prose p:last-child { margin-bottom: 0; }
+      .markdown-prose h1, .markdown-prose h2, .markdown-prose h3 { color: var(--text); margin: 1rem 0 0.5rem; font-size: 1em; font-weight: 600; }
+      .markdown-prose ul, .markdown-prose ol { margin: 0.5rem 0; padding-left: 1.5rem; }
+      .markdown-prose li { margin: 0.25rem 0; }
+      .markdown-prose strong { color: var(--text); }
+      .markdown-prose a { color: var(--accent); }
+      button[type="submit"].is-loading, .btn.is-loading {
+        cursor: wait;
+        opacity: 0.85;
+        pointer-events: none;
+      }
+      .playthrough-body {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        align-items: flex-start;
+        height: 80vh;
+      }
+      .playthrough-chat {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .playthrough-messages {
+        font-size: 0.9em;
+        margin-top: 0.5rem;
+        flex: 1;
+        overflow-y: auto;
+        height: 100%;
+      }
+      .playthrough-message {
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .playthrough-message:last-child { border-bottom: none; }
+      .playthrough-message-label {
+        font-size: 0.8em;
+        color: var(--accent-dim);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .playthrough-message--user .playthrough-message-label { color: var(--cursor); }
+      .playthrough-message-content { color: var(--text); font-size: 0.95em; }
+      .playthrough-message-content--text { white-space: pre-wrap; word-break: break-word; }
+      .playthrough-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        padding-left: 1rem;
+        border-left: 1px solid var(--border);
+        height: 100%;
+      }
+      .playthrough-sidebar .section-title { margin-top: 1rem; }
+      .playthrough-sidebar .section-title:first-child { margin-top: 0; }
+      .playthrough-sidebar-block { margin-top: 0.5rem; }
+      .playthrough-input { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+      .playthrough-input-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: flex-end;
+      }
+      .playthrough-textarea {
+        flex: 1;
+        min-width: 0;
+        resize: vertical;
+        min-height: 2.5rem;
+        padding: 0.5rem 0.75rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: inherit;
+        line-height: 1.4;
+        border-radius: 0.15rem;
+      }
+      .playthrough-textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .playthrough-textarea::placeholder { color: var(--text-dim); }
+      .playthrough-send { flex-shrink: 0; }
+      .playthrough-send:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .playthrough-send .icon-send { display: block; }
+    </style>
+  </head>
+  <body>
+    <div class="terminal<%= ' terminal--wide' if @layout_wide %>">
+      <%= yield %>
+    </div>
+    <script>
+      (function() {
+        var loadingLabel = "Generating…";
+        document.addEventListener("turbo:submit-start", function(e) {
+          if (e.target.tagName !== "FORM") return;
+          var form = e.target;
+          var label = form.dataset.loadingLabel || loadingLabel;
+          form.querySelectorAll("button[type=\"submit\"]").forEach(function(btn) {
+            btn.disabled = true;
+            btn.dataset.originalContent = btn.innerHTML;
+            btn.innerHTML = label;
+            btn.classList.add("is-loading");
+          });
+        });
+        document.addEventListener("turbo:submit-end", function(e) {
+          if (e.target.tagName !== "FORM") return;
+          var form = e.target;
+          form.querySelectorAll("button[type=\"submit\"]").forEach(function(btn) {
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalContent || "";
+            btn.classList.remove("is-loading");
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

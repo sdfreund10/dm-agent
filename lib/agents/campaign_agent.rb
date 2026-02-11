@@ -6,7 +6,7 @@ require "lib/models/log"
 
 class CampaignAgent
   attr_reader :campaign, :player_character, :log
-  def initialize(campaign, player_character)
+  def initialize(campaign, player_character, log = nil)
     @campaign = campaign
     @player_character = player_character
     @battle_manager = BattleManager.new(player_character)
@@ -24,8 +24,50 @@ class CampaignAgent
         puts message.content
       end
     end
-    @log = Log.new(campaign_id: campaign.id, player_character_id: player_character.id, messages: [])
+    .on_tool_call do |tool_call|
+      puts "Tool call: #{tool_call.to_h.transform_keys(&:to_s)}"
+    end
+    .on_tool_result do |tool_result|
+      puts "Tool result: #{tool_result.to_h.transform_keys(&:to_s)}"
+    end
+    # TODO: Swap this so the CampaignChat manages the agents an periodically saves the chat log.
+    @log = log || Log.new(campaign_id: campaign.id, player_character_id: player_character.id, messages: [])
     @input_token_count = 0
+  end
+
+  def messages
+    @chat.messages
+  end
+
+  def message_hashes
+    messages.map do |message|
+      msg = message.to_h.transform_keys(&:to_s)
+      if msg.key?("tool_calls")
+        msg["tool_calls"] = msg["tool_calls"].map { |tool_call| tool_call.to_h.transform_keys(&:to_s) }
+      end
+
+      msg
+    end
+  end
+
+  def load_messages!(messages:)
+    messages.each do |message|
+      @chat.add_message(message.transform_keys(&:to_sym))
+    end
+    self
+  end
+
+  def chat_stream(user_message:)
+    responses = ""
+    @chat.ask(user_message) do |message|
+      responses += message.content unless message.content.nil?
+    end
+    responses.strip
+  end
+
+  def start!
+    @chat.messages.clear
+    @chat.ask(starting_prompt)
   end
 
   def run(message:)

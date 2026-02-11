@@ -1,0 +1,6 @@
+<% type = message["role"] %>
+<% content = message["content"] %>
+<div class="playthrough-message playthrough-message--<%= type %>">
+  <span class="playthrough-message-label"><%= type == "user" ? "You" : "DM" %></span>
+  <div class="playthrough-message-content"><%= content ? markdown(content.to_s) : "" %></div>
+</div>

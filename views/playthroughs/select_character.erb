@@ -1,0 +1,24 @@
+<% @title = "Start playthrough — #{h(@campaign.name)}" %>
+<div class="prompt">Select a character for this playthrough.</div>
+
+<% if @characters.empty? %>
+  <p class="character-meta">No characters yet. <a href="/characters/new">Create a character</a> first.</p>
+<% else %>
+  <ul class="character-list">
+    <% @characters.each do |char| %>
+      <li>
+        <span>
+          <span class="character-name"><%= h(char.name) %></span>
+          <span class="character-meta"> — Lvl <%= char.level %> <%= char.species %> <%= char.dnd_class.name %></span>
+        </span>
+        <form action="/campaigns/<%= @campaign.id %>/playthroughs" method="post" class="delete-form">
+          <input type="hidden" name="character_id" value="<%= char.id %>">
+          <button type="submit" class="btn">Start playthrough</button>
+        </form>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<div class="divider">—</div>
+<a href="/campaigns/<%= @campaign.id %>" class="block-link">&larr; Back to campaign</a>

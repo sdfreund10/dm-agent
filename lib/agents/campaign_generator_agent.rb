@@ -26,15 +26,15 @@ require "lib/config/ruby_llm"
 #   Heist, Mystery/Investigation, Survival, Treasure Hunt
 #   EXTRAS: Exploration, Intrigue/Politics
 class CampaignGeneratorAgent
-  attr_reader :character, :tone, :genre
-  def initialize(character:, tone:, genre:)
-    @character = character
+  attr_reader :tone, :genre, :stakes
+  def initialize(stakes:, tone:, genre:)
+    @stakes = stakes
     @tone = tone
     @genre = genre
   end
 
   def generate
-    chat = RubyLLM.chat.with_temperature(1.5).with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CampaignGeneratorSchema)
+    chat = RubyLLM.chat.with_temperature(1.75).with_instructions(SYSTEM_INSTRUCTIONS).with_schema(CampaignGeneratorSchema)
     campaign_info = chat.ask(input).content
     name_response = chat.with_schema(nil).ask("Considering the overall plot, generate a short, 3-8 word name for the campaign.")
     campaign_info.merge!(
@@ -43,17 +43,6 @@ class CampaignGeneratorAgent
       tone: tone
     )
     Campaign.create(**campaign_info.transform_keys(&:to_sym))
-  end
-
-  def stakes
-    case character.level
-    when 1..3
-      "Low"
-    when 4..6
-      "Medium"
-    when 7..9
-      "High"
-    end
   end
 
   def input
@@ -80,13 +69,15 @@ class CampaignGeneratorAgent
     4. Consider key locations the party will likely need to visit as they uncover the plot.
     5. Develop an inciting incident that will introduce the party to the world.
       - This does not need to be directly related to the plot, but it should lead in to the plot in some way.
-    6. Develop 2-3 hooks that will help the party start on thier quest.
+    6. Develop 2-3 rumours that will help the party start on thier quest.
+    7. Create an engaging hook that will get the player interested in the campaign.
   SYSTEM
 
   class CampaignGeneratorSchema < RubyLLM::Schema
     string :end_goal, description: "The primary goal of the campaign."
     string :inciting_incident, description: "Starting situation for the campaign."
     string :world_info, description: "Supporting information about the setting and larger world of the campaign."
+    string :hook, description: "A brief description of the world and campaign. It should hit at the quest and goals enough to interest the player without revealing too much."
     string :primary_antagonist, description: "The primary antagonist of the campaign."
     array :npcs, description: "Important NPCs in the campaign." do
       object do
